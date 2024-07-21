@@ -56,10 +56,23 @@
    poetry shell
    ```
 
-## Init database (dev)
+## Setup env variables
+1. **Create a .env file from env.template**
 
-1. **Build and run postgre db for dev**
+   Change default values for DB credentials if you want to use another postgre DB.
+
+   You don't need to change them if using DB from docker-compose for a dev environnement.
+
+## Init database
+
+1. **Build and run postgre db for dev (if you don't have your own)**
 
    ```bash
    docker-compose -f docker-compose-db.yaml up -d
+   ```
+   
+2. **Update DB schema with alembic**
+
+   ```bash
+   alembic upgrade head
    ```
