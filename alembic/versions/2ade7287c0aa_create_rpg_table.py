@@ -22,7 +22,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table("rpg",
-                    Column("id", Integer, primary_key=True, index=True),
+                    Column("id_parcel", Integer, primary_key=True, index=True),
                     Column("code_cultu", String),
                     Column("geometry", Geometry("POLYGON", srid=SRID)),
                     Column("created_at", DateTime(timezone=True), server_default=func.now()),
