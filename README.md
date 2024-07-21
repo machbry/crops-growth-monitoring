@@ -76,3 +76,15 @@
    ```bash
    alembic upgrade head
    ```
+
+3. **Upload sample data from RPG database**
+   
+   ```bash
+   python alembic/init_scripts/load_sample_rpg_data.py
+   ```
+
+3. **Upload sample data from RPG database**
+   
+   ```bash
+   python alembic/init_scripts/load_sample_rpg_data.py
+   ```
