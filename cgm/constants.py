@@ -1,8 +1,11 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
 load_dotenv()
+
+DATA_FOLDER = Path(__file__).parents[1] / 'data'
 
 CGM_POSTGRES_HOSTNAME = os.environ.get('CGM_POSTGRES_HOSTNAME')
 CGM_POSTGRES_PORT = os.environ.get('CGM_POSTGRES_PORT')
