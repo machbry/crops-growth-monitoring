@@ -6,6 +6,7 @@ import geopandas as gpd
 
 from shapely import wkt
 from sqlalchemy import create_engine
+from psycopg2.errors import UniqueViolation
 
 from cgm.constants import SRID, CGM_POSTGRES_DB_URL
 from cgm.logger import get_logger
@@ -39,5 +40,8 @@ rpg_gdf = gpd.GeoDataFrame(rpg_data, crs='epsg:2154').to_crs(epsg=SRID)
 rpg_gdf = rpg_gdf.rename(columns=columns_map)[list(columns_map.values())]
 
 # store in postgre db
-rpg_gdf.to_postgis("rpg", con=engine, if_exists="replace", index=False)
-log.info("Data successfully loaded in postgres database")
+try:
+    rpg_gdf.to_postgis("rpg", con=engine, if_exists="append", index=False)
+    log.info("Data successfully loaded in postgres database")
+except UniqueViolation:
+    log.warning("Data already loaded in postgres database")
