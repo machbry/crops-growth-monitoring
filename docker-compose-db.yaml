@@ -3,11 +3,11 @@ services:
   postgres:
     container_name: postgres_cgm
     environment:
-      HOSTNAME: postgres_cgm
-      POSTGRES_DB: cgm_db
-      POSTGRES_PASSWORD: cgm
-      POSTGRES_USER: cgm_user
+      HOSTNAME: ${CGM_POSTGRES_HOSTNAME}
+      POSTGRES_DB: ${CGM_POSTGRES_DB}
+      POSTGRES_PASSWORD: ${CGM_POSTGRES_PASSWORD}
+      POSTGRES_USER: ${CGM_POSTGRES_USER}
     image: postgis/postgis:16-3.4
     ports:
-      - 5480:5432
+      - ${CGM_POSTGRES_PORT}:5432
     restart: unless-stopped
