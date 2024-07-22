@@ -82,3 +82,10 @@
    ```bash
    python alembic/init_scripts/load_sample_rpg_data.py
    ```
+
+## Run pipelines
+1. **To query sentinel-2 data (you can change dates range)**
+
+   ```bash
+   python run_pipeline_request_sentinel_2_data.py --from "2023-01-01" --to "2023-12-31"
+   ```
