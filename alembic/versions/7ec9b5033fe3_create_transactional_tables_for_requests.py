@@ -21,29 +21,29 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     # Create stac_requests table
     op.create_table(
-        'stac_requests',
+        'catalog_queries',
         sa.Column('uuid', sa.Uuid, primary_key=True, index=True),
         sa.Column('collection', sa.String, nullable=False),
         sa.Column('datetime_min', sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column('datetime_max', sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column('nb_items_retrieved', sa.Integer, default=0),
-        sa.Column('item_collection_json', sa.String)
+        sa.Column('item_collection_json', sa.String),
+        sa.Column("started_at", sa.DateTime(timezone=True)),
+        sa.Column("finished_at", sa.DateTime(timezone=True))
     )
 
     # Create rpg_requests table
     op.create_table(
-        'rpg_requests',
+        'parcels_queries',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column('stac_request_id', sa.Uuid,
-                  sa.ForeignKey('stac_requests.uuid', ondelete="CASCADE"), nullable=False),
-        sa.Column('rpg_id', sa.Integer,
-                  sa.ForeignKey('rpg.id_parcel', ondelete="CASCADE"), nullable=False)
+        sa.Column('parcel_id_fk', sa.Integer,
+                  sa.ForeignKey('parcels.id', ondelete="CASCADE"), nullable=False),
+        sa.Column('catalog_query_uuid_fk', sa.Uuid,
+                  sa.ForeignKey('catalog_queries.uuid', ondelete="CASCADE"), nullable=False),
     )
 
 
 def downgrade() -> None:
-    # Drop rpg_requests table
-    op.drop_table('rpg_requests')
+    op.drop_table('parcels_queries')
 
-    # Drop stac_requests table
-    op.drop_table('stac_requests')
+    op.drop_table('catalog_queries')

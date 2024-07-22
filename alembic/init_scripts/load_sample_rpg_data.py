@@ -13,7 +13,7 @@ from cgm.logger import get_logger
 log = get_logger()
 
 
-columns_map = {"ID_PARCEL_2022": "id_parcel",
+columns_map = {"ID_PARCEL_2022": "id",
                "CODE_CULTU_2022": "code_cultu",
                "geometry": "geometry"}
 
@@ -40,7 +40,7 @@ rpg_gdf = rpg_gdf.rename(columns=columns_map)[list(columns_map.values())]
 
 # store in postgre db
 try:
-    rpg_gdf.to_postgis("rpg", con=engine, if_exists="append", index=False)
-    log.info("Data successfully loaded in postgres database")
+    rpg_gdf.to_postgis("parcels", con=engine, if_exists="append", index=False)
+    log.info("Data successfully loaded in postgres database in parcels table")
 except UniqueViolation:
     log.warning("Data already loaded in postgres database")
