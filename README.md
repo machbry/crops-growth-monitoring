@@ -6,7 +6,7 @@
 
 1. Python (≥ `3.11`) installed on your system.
 2. Ensure [Docker](https://docs.docker.com/get-docker/) is installed.
-3. Ensure you have `poetry` installed. If not, you can install them using `pip`.
+3. Ensure you have `poetry` installed.
 
 ### Steps:
 
@@ -89,3 +89,28 @@
    ```bash
    python run_pipeline_request_sentinel_2_data.py --from "2023-01-01" --to "2023-12-31"
    ```
+   
+2. **To run peding computation index (ndvi & ndmi) for parcels**
+
+   ```bash
+   python run_pipeline_compute_pending_parcels_index.py --max 5 --precision 0.0001
+   ```
+   - max : max number of parcels index computations, if none provided, all will be computed.
+   - precision : Spacial precision for index computations (default = 0.0001)
+
+## Storage
+
+### Database schema
+
+**4 tables available :**
+- parcels : store parcels with their geometry.
+- catalog_queries : log catalog API queries to sentinel-2-12a collection with path to json file with results.
+- parcels_queries : link between parcels and catalog queries. Used to know if and when index computations have been done.
+- parcels_index : store values of index (NDVI & NDMI) for each time and parcel (mean values and path to COG files).
+
+### Files
+
+- Catalogs queries results to sentinel-2-12a collection are stored as JSON files.
+- COG files are also stored for each parcel.
+ 
+All these files are referenced in database.
