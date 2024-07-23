@@ -19,7 +19,10 @@ log = get_logger()
 
 # TODO : do async computations and extract computation steps in a dedicated functions
 def compute_pending_parcels_index(resolution: float, max_parcels_to_compute: int, compute_all: bool):
-    log.info("A maximum of %s parcels index will be computed at resolution %s", max_parcels_to_compute, resolution)
+    if compute_all:
+        log.info("All pending parcels index computations will be done at resolution %s", resolution)
+    else:
+        log.info("A maximum of %s parcels index will be computed at resolution %s", max_parcels_to_compute, resolution)
 
     # For pending parcels queries to compute, we get the list of parcels ids grouped by catalog query uuid
     pending_parcels_queries = get_pending_parcels_for_index_computation_by_catalog_query()
@@ -39,12 +42,12 @@ def compute_pending_parcels_index(resolution: float, max_parcels_to_compute: int
         items = ItemCollection.from_file(catalog_query.item_collection_json)
 
         p = 0
-        while (nb_parcels_computed < max_parcels_to_compute or compute_all) and p < len(parcels_ids):
+        while (compute_all or nb_parcels_computed < max_parcels_to_compute) and p < len(parcels_ids):
 
             parcel_id = parcels_ids[p]
 
-            log.info("Start of index computations ; parcel %s ; from %s ; to %s", parcel_id, catalog_query.from_datetime,
-                     catalog_query.to_datetime)
+            log.info("Start of index computations ; parcel %s ; from %s ; to %s",
+                     parcel_id, catalog_query.from_datetime, catalog_query.to_datetime)
 
             parcel = get_parcel_by_id(parcel_id)
             parcel_shape = to_shape(parcel.geometry)
@@ -58,8 +61,8 @@ def compute_pending_parcels_index(resolution: float, max_parcels_to_compute: int
                              groupby="solar_day",
                              geopolygon=parcel_shape)
 
-            log.info("Stac data loaded ; parcel %s ; from %s ; to %s", parcel_id, catalog_query.from_datetime,
-                     catalog_query.to_datetime)
+            log.info("Stac data loaded ; parcel %s ; from %s ; to %s",
+                     parcel_id, catalog_query.from_datetime, catalog_query.to_datetime)
 
             # Filter stac data on the shape of the parcel
             ShapeMask = geometry_mask([parcel_shape],
@@ -69,8 +72,8 @@ def compute_pending_parcels_index(resolution: float, max_parcels_to_compute: int
             ShapeMask = xr.DataArray(ShapeMask, dims=("latitude", "longitude"))
             data = data.where(ShapeMask == True, drop=True)
 
-            log.info("Stac data filtered on parcel shape ; parcel %s ; from %s ; to %s", parcel_id, catalog_query.from_datetime,
-                     catalog_query.to_datetime)
+            log.info("Stac data filtered on parcel shape ; parcel %s ; from %s ; to %s",
+                     parcel_id, catalog_query.from_datetime, catalog_query.to_datetime)
 
             # Create ndvi and ndmi variables
             data["nir"] = data.nir.astype(int)
@@ -80,21 +83,25 @@ def compute_pending_parcels_index(resolution: float, max_parcels_to_compute: int
             data["ndvi"] = (data.nir - data.red) / (data.nir + data.red)
             data["ndmi"] = (data.nir - data.swir16) / (data.nir + data.swir16)
 
-            log.info("NDVI and NDMI index created ; parcel %s ; from %s ; to %s", parcel_id, catalog_query.from_datetime,
-                     catalog_query.to_datetime)
+            log.info("NDVI and NDMI index created ; parcel %s ; from %s ; to %s",
+                     parcel_id, catalog_query.from_datetime, catalog_query.to_datetime)
 
             # Compute index
             data = data.compute()
-            log.info("Index computed ; parcel %s ; from %s ; to %s)", parcel_id, catalog_query.from_datetime,
-                     catalog_query.to_datetime)
+            log.info("Index computed ; parcel %s ; from %s ; to %s)",
+                     parcel_id, catalog_query.from_datetime, catalog_query.to_datetime)
 
             # Filter zones with clouds using SCL classification
             data = data.where(data.scl.isin([4, 5, 6, 7]), drop=True)
 
-            log.info("Zones with clouds filtered from data ; parcel %s ; from %s ; to %s", parcel_id, catalog_query.from_datetime,
-                     catalog_query.to_datetime)
+            log.info("Zones with clouds filtered from data ; parcel %s ; from %s ; to %s",
+                     parcel_id, catalog_query.from_datetime, catalog_query.to_datetime)
 
             time_values = data['time'].values
+            if len(time_values) == 0:
+                log.warning("No data left to compute index after filtering clouds ; parcel %s ; from %s ; to %s",
+                            parcel_id, catalog_query.from_datetime, catalog_query.to_datetime)
+
             for t in time_values:
 
                 day = np.datetime_as_string(t, unit='D')
@@ -136,9 +143,9 @@ def compute_pending_parcels_index(resolution: float, max_parcels_to_compute: int
                 save_parcel_index(parcel_index)
                 log.info("Index computation results saved in database ; parcel %s ; time %s", parcel.id, t)
 
-                # Log in database that its parcel query has been computed
-                update_parcel_query(parcel=parcel, catalog_query=catalog_query,
-                                    index_computed_at=datetime.now(tz=SERVER_TIMEZONE))
+            # Log in database that its parcel query has been computed
+            update_parcel_query(parcel=parcel, catalog_query=catalog_query,
+                                index_computed_at=datetime.now(tz=SERVER_TIMEZONE))
 
             p += 1
             nb_parcels_computed += 1
