@@ -8,7 +8,7 @@ from shapely.geometry import MultiPolygon
 
 from cgm.logger import get_logger
 from cgm.database.requests import get_all_rpg_parcels
-from cgm.constants import CATALOGS_FOLDER
+from cgm.constants import CATALOGS_FOLDER, SERVER_TIMEZONE
 from cgm.database.models import CatalogQuery, ParcelQuery, Parcel
 from cgm.database.session import get_session
 
@@ -17,7 +17,7 @@ log = get_logger()
 
 def request_sentinel_2_data(parcels_to_requests: List[Parcel], from_datetime, to_datetime, collection="sentinel-2-l2a"):
     # Init
-    query_started_at = datetime.now()
+    query_started_at = datetime.now(tz=SERVER_TIMEZONE)
 
     # Create catalog
     catalog = Client.open("https://earth-search.aws.element84.com/v1/")
@@ -57,15 +57,15 @@ def request_sentinel_2_data(parcels_to_requests: List[Parcel], from_datetime, to
                                 nb_items_retrieved=len(items),
                                 item_collection_json=str(item_collection_json_path),
                                 started_at=query_started_at,
-                                done_at=datetime.now())
+                                done_at=datetime.now(tz=SERVER_TIMEZONE))
 
     parcels_ids_requested = [parcel.id for parcel in parcels_to_requests]
 
-    rpg_requests = [ParcelQuery(parcel_id_fk=id_parcel,
-                                catalog_query_uuid_fk=catalog_query_uuid) for id_parcel in
-                    parcels_ids_requested]
+    parcels_queries = [ParcelQuery(parcel_id_fk=id_parcel,
+                                   catalog_query_uuid_fk=catalog_query_uuid) for id_parcel in
+                       parcels_ids_requested]
 
     with get_session() as session:
         session.add(stac_request)
-        session.add_all(rpg_requests)
+        session.add_all(parcels_queries)
         session.commit()
