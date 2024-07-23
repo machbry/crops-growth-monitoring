@@ -40,6 +40,8 @@ def upgrade() -> None:
                   sa.ForeignKey('parcels.id', ondelete="CASCADE"), nullable=False),
         sa.Column('catalog_query_uuid_fk', sa.Uuid,
                   sa.ForeignKey('catalog_queries.uuid', ondelete="CASCADE"), nullable=False),
+        sa.Column("resolution", sa.Float),
+        sa.Column("usable_data_size", sa.Integer)
     )
 
 

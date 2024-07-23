@@ -29,6 +29,8 @@ def upgrade():
         sa.Column('mean_ndmi', sa.Float(), nullable=False),
         sa.Column('ndvi_cog_file', sa.String(), nullable=False),
         sa.Column('ndmi_cog_file', sa.String(), nullable=False),
+        sa.Column("resolution", sa.Float),
+        sa.Column("usable_data_size", sa.Integer),
         sa.ForeignKeyConstraint(['parcel_id_fk'], ['parcels.id'], ondelete='CASCADE')
     )
 

@@ -62,13 +62,16 @@ def save_parcel_index(parcel_index: ParcelIndex) -> None:
         session.commit()
 
 
-def update_parcel_query(parcel: Parcel, catalog_query: CatalogQuery, index_computed_at: datetime.timetz) -> None:
+def update_parcel_query(parcel: Parcel, catalog_query: CatalogQuery, index_computed_at: datetime.timetz,
+                        resolution: float, usable_data_size: int) -> None:
     with get_session() as session:
         query = update(ParcelQuery).where(
             and_(
                 ParcelQuery.parcel_id_fk == parcel.id,
                 ParcelQuery.catalog_query_uuid_fk == catalog_query.uuid)
-        ).values(index_computed_at=index_computed_at)
+        ).values(index_computed_at=index_computed_at,
+                 resolution=resolution,
+                 usable_data_size=usable_data_size)
 
         session.execute(query)
         session.commit()

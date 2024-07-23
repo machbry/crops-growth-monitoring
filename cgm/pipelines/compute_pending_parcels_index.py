@@ -105,12 +105,13 @@ def compute_pending_parcels_index(resolution: float, max_parcels_to_compute: int
             for t in time_values:
 
                 day = np.datetime_as_string(t, unit='D')
+                data_t = data.sel(time=t)
 
                 # Compute mean values for ndvi and ndmi
-                ndvi_t = data.sel(time=t)['ndvi']
+                ndvi_t = data_t['ndvi']
                 mean_ndvi_t = ndvi_t.mean(dim=['latitude', 'longitude'], skipna=True)
 
-                ndmi_t = data.sel(time=t)['ndmi']
+                ndmi_t = data_t['ndmi']
                 mean_ndmi_t = ndmi_t.mean(dim=['latitude', 'longitude'], skipna=True)
 
                 # Save index results in COG files
@@ -138,14 +139,19 @@ def compute_pending_parcels_index(resolution: float, max_parcels_to_compute: int
                                            mean_ndvi=float(mean_ndvi_t),
                                            mean_ndmi=float(mean_ndmi_t),
                                            ndvi_cog_file=str(ndvi_cog_file_path),
-                                           ndmi_cog_file=str(ndmi_cog_file_path))
+                                           ndmi_cog_file=str(ndmi_cog_file_path),
+                                           resolution=resolution,
+                                           usable_data_size=data_t.dims["longitude"] * data_t.dims["latitude"])
 
                 save_parcel_index(parcel_index)
                 log.info("Index computation results saved in database ; parcel %s ; time %s", parcel.id, t)
 
             # Log in database that its parcel query has been computed
-            update_parcel_query(parcel=parcel, catalog_query=catalog_query,
-                                index_computed_at=datetime.now(tz=SERVER_TIMEZONE))
+            update_parcel_query(parcel=parcel,
+                                catalog_query=catalog_query,
+                                index_computed_at=datetime.now(tz=SERVER_TIMEZONE),
+                                resolution=resolution,
+                                usable_data_size=data.dims["time"] * data.dims["longitude"] * data.dims["latitude"])
 
             p += 1
             nb_parcels_computed += 1

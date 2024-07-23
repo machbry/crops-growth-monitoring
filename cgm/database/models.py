@@ -42,6 +42,8 @@ class ParcelQuery(Base):
     parcel_id_fk = Column("parcel_id_fk", Integer, ForeignKey('parcels.id', ondelete="CASCADE"), nullable=False)
     catalog_query_uuid_fk = Column("catalog_query_uuid_fk", Uuid, ForeignKey('catalog_queries.uuid', ondelete="CASCADE"), nullable=False)
     index_computed_at = Column("index_computed_at", DateTime(timezone=True), default=None)
+    resolution = Column("resolution", Float)
+    usable_data_size = Column("usable_data_size", Integer)
 
     parcel = relationship("Parcel", back_populates="parcel_queries")
     catalog_query = relationship("CatalogQuery", back_populates="parcel_queries")
@@ -56,5 +58,7 @@ class ParcelIndex(Base):
     mean_ndmi = Column("mean_ndmi", Float, nullable=False)
     ndvi_cog_file = Column("ndvi_cog_file", String, nullable=False)
     ndmi_cog_file = Column("ndmi_cog_file", String, nullable=False)
+    resolution = Column("resolution", Float)
+    usable_data_size = Column("usable_data_size", Integer)
 
     parcel = relationship("Parcel", back_populates="parcel_indexes")

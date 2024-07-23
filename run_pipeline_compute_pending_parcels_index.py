@@ -31,18 +31,18 @@ def main():
                         default=None,
                         help="Max number of parcels index computations, if none provided, all will be computed.")
 
-    parser.add_argument('--precision',
+    parser.add_argument('--resolution',
                         required=False,
                         type=valid_float,
                         default=0.0001,
-                        help="Spacial precision for index computations.")
+                        help="Spacial resolution for index computations.")
 
     args = vars(parser.parse_args())
 
     compute_all = False if args['max'] else True
 
     # Launch pipeline
-    compute_pending_parcels_index(resolution=args["precision"],
+    compute_pending_parcels_index(resolution=args["resolution"],
                                   max_parcels_to_compute=args["max"],
                                   compute_all=compute_all)
 

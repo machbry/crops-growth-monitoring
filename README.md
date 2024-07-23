@@ -93,7 +93,7 @@
 2. **To run peding computation index (ndvi & ndmi) for parcels**
 
    ```bash
-   python run_pipeline_compute_pending_parcels_index.py --max 5 --precision 0.0001
+   python run_pipeline_compute_pending_parcels_index.py --max 5 --resolution 0.0001
    ```
    - max : max number of parcels index computations, if none provided, all will be computed.
    - precision : Spacial precision for index computations (default = 0.0001)
