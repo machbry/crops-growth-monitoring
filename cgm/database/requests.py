@@ -4,7 +4,7 @@ from datetime import datetime
 
 from sqlalchemy import select, func, and_, update
 
-from cgm.database.models import Parcel, ParcelQuery, CatalogQuery
+from cgm.database.models import Parcel, ParcelQuery, CatalogQuery, ParcelIndex
 from cgm.database.session import get_session
 
 
@@ -56,9 +56,9 @@ def get_parcel_by_id(parcel_id: int) -> Parcel:
     return result
 
 
-def save_parcel_index(parcel: Parcel) -> None:
+def save_parcel_index(parcel_index: ParcelIndex) -> None:
     with get_session() as session:
-        session.merge(parcel)
+        session.merge(parcel_index)
         session.commit()
 
 
