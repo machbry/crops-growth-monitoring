@@ -1,4 +1,4 @@
-"""create transactional tables for stac requests
+"""create transactional tables for catalog queries
 
 Revision ID: 7ec9b5033fe3
 Revises: 2ade7287c0aa
@@ -19,7 +19,6 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Create stac_requests table
     op.create_table(
         'catalog_queries',
         sa.Column('uuid', sa.Uuid, primary_key=True, index=True),
@@ -32,7 +31,6 @@ def upgrade() -> None:
         sa.Column("finished_at", sa.DateTime(timezone=True))
     )
 
-    # Create rpg_requests table
     op.create_table(
         'parcels_queries',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),

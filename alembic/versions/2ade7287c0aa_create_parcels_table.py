@@ -1,4 +1,4 @@
-"""create rpg table
+"""create parcels table
 
 Revision ID: 2ade7287c0aa
 Revises: 
