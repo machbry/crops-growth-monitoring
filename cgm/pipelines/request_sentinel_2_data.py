@@ -7,10 +7,9 @@ from pystac_client import Client
 from shapely.geometry import MultiPolygon
 
 from cgm.logger import get_logger
-from cgm.database.requests import get_all_rpg_parcels
+from cgm.database.requests import get_all_rpg_parcels, save_catalog_query, save_parcels_queries
 from cgm.constants import CATALOGS_FOLDER, SERVER_TIMEZONE
 from cgm.database.models import CatalogQuery, ParcelQuery, Parcel
-from cgm.database.session import get_session
 
 log = get_logger()
 
@@ -50,14 +49,14 @@ def request_sentinel_2_data(parcels_to_requests: List[Parcel], from_datetime, to
     log.info("item collection saved into json file %s", item_collection_json_path)
 
     # Log request in database
-    stac_request = CatalogQuery(uuid=catalog_query_uuid,
-                                collection=collection,
-                                from_datetime=from_datetime,
-                                to_datetime=to_datetime,
-                                nb_items_retrieved=len(items),
-                                item_collection_json=str(item_collection_json_path),
-                                started_at=query_started_at,
-                                done_at=datetime.now(tz=SERVER_TIMEZONE))
+    catalog_query = CatalogQuery(uuid=catalog_query_uuid,
+                                 collection=collection,
+                                 from_datetime=from_datetime,
+                                 to_datetime=to_datetime,
+                                 nb_items_retrieved=len(items),
+                                 item_collection_json=str(item_collection_json_path),
+                                 started_at=query_started_at,
+                                 done_at=datetime.now(tz=SERVER_TIMEZONE))
 
     parcels_ids_requested = [parcel.id for parcel in parcels_to_requests]
 
@@ -65,7 +64,5 @@ def request_sentinel_2_data(parcels_to_requests: List[Parcel], from_datetime, to
                                    catalog_query_uuid_fk=catalog_query_uuid) for id_parcel in
                        parcels_ids_requested]
 
-    with get_session() as session:
-        session.add(stac_request)
-        session.add_all(parcels_queries)
-        session.commit()
+    save_catalog_query(catalog_query)
+    save_parcels_queries(parcels_queries)

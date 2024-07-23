@@ -16,6 +16,18 @@ def get_all_rpg_parcels() -> List[Parcel]:
     return results
 
 
+def save_catalog_query(catalog_query: CatalogQuery):
+    with get_session() as session:
+        session.add(catalog_query)
+        session.commit()
+
+
+def save_parcels_queries(parcels_queries: List[ParcelQuery]):
+    with get_session() as session:
+        session.add_all(parcels_queries)
+        session.commit()
+
+
 def get_pending_parcels_for_index_computation_by_catalog_query() -> List[Tuple[UUID, List[int]]]:
     with get_session() as session:
         query = select(ParcelQuery.catalog_query_uuid_fk,
