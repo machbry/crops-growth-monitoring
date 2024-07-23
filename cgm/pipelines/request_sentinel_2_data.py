@@ -8,7 +8,7 @@ from shapely.geometry import MultiPolygon
 
 from cgm.logger import get_logger
 from cgm.database.requests import get_all_rpg_parcels
-from cgm.constants import DATA_FOLDER
+from cgm.constants import CATALOGS_FOLDER
 from cgm.database.models import CatalogQuery, ParcelQuery, Parcel
 from cgm.database.session import get_session
 
@@ -44,7 +44,7 @@ def request_sentinel_2_data(parcels_to_requests: List[Parcel], from_datetime, to
 
     # Save results in a json file
     json_name = f"{collection}_{from_datetime.strftime('%Y-%m-%d')}_to_{to_datetime.strftime('%Y-%m-%d')}_{catalog_query_uuid}.json"
-    item_collection_json_path = DATA_FOLDER / json_name
+    item_collection_json_path = CATALOGS_FOLDER / json_name
     query.item_collection().save_object(item_collection_json_path)
 
     log.info("item collection saved into json file %s", item_collection_json_path)
