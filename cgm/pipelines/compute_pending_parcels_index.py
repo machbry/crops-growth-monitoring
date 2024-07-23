@@ -134,7 +134,7 @@ def compute_pending_parcels_index(resolution: float, max_parcels_to_compute: int
                 log.info("NDMI COG file saved at %s ; parcel %s ; day %s", ndmi_cog_file_path, parcel.id, day)
 
                 # Saving index computation results in database
-                parcel_index = ParcelIndex(parcel_id_fk=parcel.id,
+                parcel_index = ParcelIndex(parcel_id=parcel.id,
                                            datetime=pd.to_datetime(t),
                                            mean_ndvi=float(mean_ndvi_t),
                                            mean_ndmi=float(mean_ndmi_t),

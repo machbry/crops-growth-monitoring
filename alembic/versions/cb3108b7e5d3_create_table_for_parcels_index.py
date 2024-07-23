@@ -1,4 +1,4 @@
-"""Create table for parcels index
+"""create table for parcels index
 
 Revision ID: cb3108b7e5d3
 Revises: 7ec9b5033fe3
@@ -22,16 +22,14 @@ def upgrade():
     op.add_column('parcels_queries', sa.Column('index_computed_at', sa.DateTime(timezone=True), nullable=True))
 
     op.create_table('parcels_index',
-        sa.Column('parcel_id_fk', sa.Integer(), sa.ForeignKey('parcels.id', ondelete="CASCADE"),
-                  nullable=False, primary_key=True, index=True),
+        sa.Column('parcel_id', sa.Integer(), nullable=False, primary_key=True, index=True),
         sa.Column('datetime', sa.DateTime(timezone=True), primary_key=True, index=True, nullable=False),
         sa.Column('mean_ndvi', sa.Float(), nullable=False),
         sa.Column('mean_ndmi', sa.Float(), nullable=False),
         sa.Column('ndvi_cog_file', sa.String(), nullable=False),
         sa.Column('ndmi_cog_file', sa.String(), nullable=False),
         sa.Column("resolution", sa.Float),
-        sa.Column("usable_data_size", sa.Integer),
-        sa.ForeignKeyConstraint(['parcel_id_fk'], ['parcels.id'], ondelete='CASCADE')
+        sa.Column("usable_data_size", sa.Integer)
     )
 
 

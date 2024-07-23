@@ -19,7 +19,6 @@ class Parcel(Base):
     updated_at = Column("updated_at", DateTime(timezone=True), onupdate=func.now())
 
     parcel_queries = relationship("ParcelQuery", back_populates="parcel", cascade="all, delete")
-    parcel_indexes = relationship("ParcelIndex", back_populates="parcel", cascade="all, delete")
 
 
 class CatalogQuery(Base):
@@ -51,8 +50,7 @@ class ParcelQuery(Base):
 
 class ParcelIndex(Base):
     __tablename__ = 'parcels_index'
-    parcel_id_fk = Column("parcel_id_fk", Integer, ForeignKey('parcels.id', ondelete="CASCADE"),
-                          primary_key=True, index=True, nullable=False)
+    parcel_id = Column("parcel_id", Integer, primary_key=True, index=True, nullable=False)
     datetime = Column("datetime", DateTime(timezone=True), primary_key=True, index=True, nullable=False)
     mean_ndvi = Column("mean_ndvi", Float, nullable=False)
     mean_ndmi = Column("mean_ndmi", Float, nullable=False)
@@ -60,5 +58,3 @@ class ParcelIndex(Base):
     ndmi_cog_file = Column("ndmi_cog_file", String, nullable=False)
     resolution = Column("resolution", Float)
     usable_data_size = Column("usable_data_size", Integer)
-
-    parcel = relationship("Parcel", back_populates="parcel_indexes")
