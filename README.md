@@ -76,6 +76,7 @@
    ```bash
    alembic upgrade head
    ```
+   You may need to wait few seconds before running this command to enable container to run.
 
 3. **Upload sample data with parcels from RPG database**
    
@@ -87,16 +88,16 @@
 1. **To query sentinel-2 data with chosen dates range**
 
    ```bash
-   python run_pipeline_request_sentinel_2_data.py --from "2024-06-01" --to "2024-06-30"
+   python src/run_pipeline_request_sentinel_2_data.py --from "2024-06-01" --to "2024-06-30"
    ```
    
 2. **To run pending computations index (NDVI & NDMI) for parcels**
 
    ```bash
-   python run_pipeline_compute_pending_parcels_index.py --max 5 --resolution 0.0001
+   python src/run_pipeline_compute_pending_parcels_index.py --max 5 --resolution 0.0001
    ```
    - max : max number of parcels index computations, if none provided, all will be computed.
-   - precision : Spacial precision for index computations (default = 0.0001)
+   - resolution : spacial resolution for index computations (default = 0.0001)
 
 ## Storage
 
