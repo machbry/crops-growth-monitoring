@@ -17,7 +17,7 @@ from cgm.logger import get_logger
 log = get_logger()
 
 
-# TODO : do async computations and extract computation steps in a dedicated functions
+# TODO : do async computations and extract computation steps in dedicated functions
 def compute_pending_parcels_index(resolution: float, max_parcels_to_compute: int, compute_all: bool):
     if compute_all:
         log.info("All pending parcels index computations will be done at resolution %s", resolution)

@@ -6,7 +6,7 @@
 
 1. Python (≥ `3.11`) installed on your system.
 2. Ensure [Docker](https://docs.docker.com/get-docker/) is installed.
-3. Ensure you have `poetry` installed.
+3. Ensure you have `poetry` installed (you can also use `pip`)
 
 ### Steps:
 
@@ -59,7 +59,7 @@
 ## Setup env variables
 1. **Create a .env file from env.template**
 
-   Change default values for DB credentials if you want to use another postgre DB.
+   Change default values for DB credentials if you want to use an existing postgre DB.
 
    You don't need to change them if using DB from docker-compose for a dev environnement.
 
@@ -77,20 +77,20 @@
    alembic upgrade head
    ```
 
-3. **Upload sample data from RPG database**
+3. **Upload sample data with parcels from RPG database**
    
    ```bash
    python alembic/init_scripts/load_sample_rpg_data.py
    ```
 
 ## Run pipelines
-1. **To query sentinel-2 data (you can change dates range)**
+1. **To query sentinel-2 data with chosen dates range**
 
    ```bash
-   python run_pipeline_request_sentinel_2_data.py --from "2023-01-01" --to "2023-12-31"
+   python run_pipeline_request_sentinel_2_data.py --from "2024-06-01" --to "2024-06-30"
    ```
    
-2. **To run peding computation index (ndvi & ndmi) for parcels**
+2. **To run pending computations index (NDVI & NDMI) for parcels**
 
    ```bash
    python run_pipeline_compute_pending_parcels_index.py --max 5 --resolution 0.0001
